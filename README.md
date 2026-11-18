@@ -81,7 +81,6 @@ carries every VLAN and is the L2 path HSRP peers over.
 - [`docs/security.md`](docs/security.md) — three-tier segmentation, hardening, and the live ping evidence
 - [`docs/high-availability.md`](docs/high-availability.md) — HSRP dual-core, tracked-WAN failover, the resilience roadmap, and the failover demo
 - [`docs/lessons-learned.md`](docs/lessons-learned.md) — the real gotchas, diagnosed and fixed on live IOS
-- [`docs/hotel-cml-lab.html`](docs/hotel-cml-lab.html) — the original illustrated build guide (download to view)
 
 ---
 
