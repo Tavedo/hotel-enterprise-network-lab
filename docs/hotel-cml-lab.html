@@ -505,8 +505,8 @@ svg.topo{width:100%;height:auto;background:var(--s1);border:1px solid var(--bord
 <span class="ck">hostname</span> R1-EDGE
 <span class="ck">no ip domain-lookup</span>
 <span class="ck">ip domain-name</span> hotel.local
-<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> Hotel@2026
-<span class="ck">enable secret</span> Enable@2026
+<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> <ADMIN_SECRET>
+<span class="ck">enable secret</span> <ENABLE_SECRET>
 <span class="ci">crypto key generate rsa modulus 2048</span>
 <span class="ck">ip ssh version</span> 2
 <span class="ck">line vty</span> 0 4
@@ -689,8 +689,8 @@ svg.topo{width:100%;height:auto;background:var(--s1);border:1px solid var(--bord
 <span class="ck">hostname</span> SW-CORE
 <span class="ck">no ip domain-lookup</span>
 <span class="ck">ip domain-name</span> hotel.local
-<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> Hotel@2026
-<span class="ck">enable secret</span> Enable@2026
+<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> <ADMIN_SECRET>
+<span class="ck">enable secret</span> <ENABLE_SECRET>
 <span class="cm">! --- create the hotel VLANs ---</span>
 <span class="ck">vlan</span> 10
  <span class="ck">name</span> MANAGEMENT
@@ -795,8 +795,8 @@ svg.topo{width:100%;height:auto;background:var(--s1);border:1px solid var(--bord
 <span class="ck">configure terminal</span>
 <span class="ck">hostname</span> SW-FD
 <span class="ck">no ip domain-lookup</span>
-<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> Hotel@2026
-<span class="ck">enable secret</span> Enable@2026
+<span class="ck">username</span> admin <span class="ck">privilege</span> 15 <span class="ck">secret</span> <ADMIN_SECRET>
+<span class="ck">enable secret</span> <ENABLE_SECRET>
 <span class="cm">! same VLANs as core</span>
 <span class="ck">vlan</span> 10
  <span class="ck">name</span> MANAGEMENT
@@ -1763,7 +1763,7 @@ write_files:
       channel=6
       auth_algs=1
       wpa=2
-      wpa_passphrase=GuestWifi2026
+      wpa_passphrase=<WIFI_PSK>
       wpa_key_mgmt=WPA-PSK
       rsn_pairwise=CCMP
       beacon_int=1000
@@ -1794,7 +1794,7 @@ write_files:
       network={
           ssid="HOTEL-GUEST"
           key_mgmt=WPA-PSK
-          psk="GuestWifi2026"
+          psk="<WIFI_PSK>"
       }
     owner: cisco:cisco
     permissions: '0644'
