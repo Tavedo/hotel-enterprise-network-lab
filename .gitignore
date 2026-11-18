@@ -1,0 +1,10 @@
+# CML topology exports (may embed device configs / secrets)
+*.virl
+*.cml
+topology.yaml
+
+# OS / editor
+.DS_Store
+*.zip
+venv/
+.venv/
