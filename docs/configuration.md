@@ -1,4 +1,4 @@
-# Configuration
+ Configuration
 
 The paste-ready configs for the final L3-core build. Passwords are shown as
 placeholders — set your own at deploy time.
@@ -8,12 +8,13 @@ Wiring:
 | A side | B side | Role |
 |---|---|---|
 | L3-CORE G0/3 | EDGE-R1 G0/1 | routed /30 — 10.0.0.0/30 |
-| L3-CORE G0/2 | SW-ADMIN G0/0 | trunk (10,20,40,99,999) |
+| L3-CORE G0/2 | SW-ADMIN G0/0 | trunk (10,20,40,50,99,999) |
 | L3-CORE G0/0 | SW-FLOOR1 G0/2 | trunk (30,99,999) |
 | L3-CORE G0/1 | SW-FLOOR2 G0/2 | trunk (30,99,999) |
 | SW-ADMIN G0/1 | HOTEL-SERVER | access VLAN 40 |
 | SW-ADMIN G0/2-3 | MANAGER / OFFICE PC | access VLAN 20 |
 | SW-ADMIN G1/0-1 | FRONT-DESK PCs | access VLAN 10 |
+| SW-ADMIN G2/0 | F&B / POS terminal | access VLAN 50 |
 | SW-FLOOR1/2 G0/0-1 | guest APs | access VLAN 30 |
 | EDGE-R1 G0/0 | ISP-R1 G0/1 | WAN /30 — 203.0.113.0/30 |
 | ISP-R1 G0/0 | PUBLIC-SERVER | 198.51.100.0/24 |
@@ -41,6 +42,8 @@ vlan 30
  name GUEST_WIFI
 vlan 40
  name HOTEL_SERVICES
+vlan 50
+ name F_AND_B
 vlan 60
  name VOICE
 vlan 80
@@ -50,7 +53,7 @@ vlan 99
 vlan 999
  name UNUSED_NATIVE
 ! make the core the STP root
-spanning-tree vlan 10,20,30,40,60,80,99,999 root primary
+spanning-tree vlan 10,20,30,40,50,60,80,99,999 root primary
 ```
 
 ### Trunks (encapsulation before mode)
@@ -99,6 +102,10 @@ interface Vlan30
 interface Vlan40
  ip address 192.168.40.1 255.255.255.0
  no shutdown
+interface Vlan50
+ description F_AND_B_GATEWAY
+ ip address 192.168.50.1 255.255.255.0
+ no shutdown
 interface Vlan60
  ip address 192.168.60.1 255.255.255.0
  no shutdown
@@ -126,6 +133,7 @@ ip route 0.0.0.0 0.0.0.0 10.0.0.1
 ip dhcp excluded-address 192.168.10.1 192.168.10.20
 ip dhcp excluded-address 192.168.20.1 192.168.20.20
 ip dhcp excluded-address 192.168.30.1 192.168.30.20
+ip dhcp excluded-address 192.168.50.1 192.168.50.20
 ip dhcp pool FRONT_DESK
  network 192.168.10.0 255.255.255.0
  default-router 192.168.10.1
@@ -138,6 +146,10 @@ ip dhcp pool MANAGEMENT
 ip dhcp pool GUEST_WIFI
  network 192.168.30.0 255.255.255.0
  default-router 192.168.30.1
+ dns-server 198.51.100.2
+ip dhcp pool F_AND_B
+ network 192.168.50.0 255.255.255.0
+ default-router 192.168.50.1
  dns-server 198.51.100.2
 ```
 
@@ -160,6 +172,8 @@ vlan 20
  name MANAGEMENT
 vlan 40
  name HOTEL_SERVICES
+vlan 50
+ name F_AND_B
 vlan 99
  name NETWORK_MGMT
 vlan 999
@@ -170,7 +184,7 @@ interface GigabitEthernet0/0
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 999
- switchport trunk allowed vlan 10,20,40,99,999
+ switchport trunk allowed vlan 10,20,40,50,99,999
  switchport nonegotiate
  no shutdown
 ! front desk PCs - VLAN 10
@@ -191,6 +205,13 @@ interface range GigabitEthernet0/2 - 3
 interface GigabitEthernet0/1
  switchport mode access
  switchport access vlan 40
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+! F&B / POS terminal - VLAN 50
+interface GigabitEthernet2/0
+ switchport mode access
+ switchport access vlan 50
  spanning-tree portfast
  spanning-tree bpduguard enable
  no shutdown
@@ -274,6 +295,7 @@ ip route 192.168.10.0 255.255.255.0 10.0.0.2
 ip route 192.168.20.0 255.255.255.0 10.0.0.2
 ip route 192.168.30.0 255.255.255.0 10.0.0.2
 ip route 192.168.40.0 255.255.255.0 10.0.0.2
+ip route 192.168.50.0 255.255.255.0 10.0.0.2
 ip route 192.168.99.0 255.255.255.0 10.0.0.2
 ip route 0.0.0.0 0.0.0.0 203.0.113.1
 !
@@ -282,6 +304,7 @@ ip access-list standard NAT_INSIDE
  permit 192.168.20.0 0.0.0.255
  permit 192.168.30.0 0.0.0.255
  permit 192.168.40.0 0.0.0.255
+ permit 192.168.50.0 0.0.0.255
  permit 192.168.99.0 0.0.0.255
 ip nat inside source list NAT_INSIDE interface GigabitEthernet0/0 overload
 ```

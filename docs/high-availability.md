@@ -39,8 +39,8 @@ interface Vlan10
  standby 10 priority 110
  standby 10 preempt
  standby 10 track 1 decrement 30
-! repeat per VLAN (20,30,40,60,80,99) with matching group numbers
-spanning-tree vlan 10,20,30,40,60,80,99 priority 4096
+! repeat per VLAN (20,30,40,50,60,80,99) with matching group numbers
+spanning-tree vlan 10,20,30,40,50,60,80,99 priority 4096
 ```
 
 **L3-CORE-2 (standby, priority 90):**
@@ -52,7 +52,7 @@ interface Vlan10
  standby 10 priority 90
  standby 10 preempt
 ! repeat per VLAN
-spanning-tree vlan 10,20,30,40,60,80,99 priority 8192
+spanning-tree vlan 10,20,30,40,50,60,80,99 priority 8192
 ```
 
 **The object track is the point:** `track 1` watches the uplink to EDGE
